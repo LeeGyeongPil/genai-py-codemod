@@ -1,0 +1,1 @@
+the old SDK uses gRPC for async calls, which cannot be mocked over REST
