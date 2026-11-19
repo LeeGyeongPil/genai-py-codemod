@@ -1,0 +1,29 @@
+# No API keys and no network access to Google are needed: the verify tests use mocked transports.
+name: ci
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday - catches SDK releases that break the migration rules
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v10.3.3
+      - run: uv python install
+      - run: uv sync --locked
+      - run: uv run pytest -q
+  vertex:
+    # Old Vertex AI SDK (google-cloud-aiplatform 2.10.0 pins google-genai<3) in a second environment.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v10.3.3
+      - run: uv python install
+      - run: uv sync --locked
+      - run: uv run python scripts/make_vertex_env.py
+      - run: uv run pytest -q tests/test_verify_vertex.py
+        env:
+          GENAI_PY_CODEMOD_VERTEX_PYTHON: ${{ github.workspace }}/.venv-vertex/bin/python
