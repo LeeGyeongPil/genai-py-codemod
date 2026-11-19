@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "genai-py-codemod"
+version = "0.1.0"
+description = "Format-preserving codemod that moves google-generativeai and vertexai.generative_models code to google-genai, with a keyless request-equivalence check."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+keywords = ["gemini", "google-genai", "google-generativeai", "vertexai", "libcst", "codemod", "migration"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+dependencies = ["libcst>=1.9.0,<2"]
+
+[project.optional-dependencies]
+# Needed only for `genai-py-codemod verify` when both SDK generations live in one environment.
+verify = ["google-generativeai>=0.8.6", "google-genai>=2.0"]
+
+[project.scripts]
+genai-py-codemod = "genai_py_codemod.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/LeeGyeongPil/genai-py-codemod"
+Issues = "https://github.com/LeeGyeongPil/genai-py-codemod/issues"
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "google-generativeai==0.8.6",
+  "google-genai==3.6.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/genai_py_codemod"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "examples", "scripts", "README.md", "README.ko.md", "CHANGELOG.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
